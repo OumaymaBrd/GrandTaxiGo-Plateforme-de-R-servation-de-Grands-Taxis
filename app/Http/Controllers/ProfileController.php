@@ -24,28 +24,31 @@ class ProfileController extends Controller
             'telephone' => 'required|string|max:20',
             'date_naissance' => 'required|date',
             'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'password' => 'nullable|string|min:8|confirmed',
         ]);
+
+        $user->nom = $request->nom;
+        $user->prenom = $request->prenom;
+        $user->email = $request->email;
+        $user->telephone = $request->telephone;
+        $user->date_naissance = $request->date_naissance;
 
         if ($request->hasFile('image')) {
             if ($user->image) {
                 Storage::disk('public')->delete($user->image);
             }
-            $imagePath = $request->file('image')->store('profile-images', 'public');
-            $user->image = $imagePath;
+            $user->image = $request->file('image')->store('profile-images', 'public');
         }
 
-        $user->update([
-            'nom' => $request->nom,
-            'prenom' => $request->prenom,
-            'email' => $request->email,
-            'telephone' => $request->telephone,
-            'date_naissance' => $request->date_naissance,
-        ]);
+        if ($request->filled('password')) {
+            $user->password = Hash::make($request->password);
+        }
 
         if ($request->has('status')) {
             $user->status = $request->status === 'active' ? 'enregistre' : 'supprime';
-            $user->save();
         }
+
+        $user->save();
 
         return back()->with('success', 'Profil mis à jour avec succès.');
     }

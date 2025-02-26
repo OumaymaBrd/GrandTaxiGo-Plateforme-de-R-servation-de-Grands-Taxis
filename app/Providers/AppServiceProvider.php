@@ -3,7 +3,7 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\Schema; // Ajoutez cette ligne
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -14,6 +14,6 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        Blade::component('app-layout', \App\View\Components\AppLayout::class);
+        Schema::defaultStringLength(191); // Ajoutez cette ligne
     }
 }
